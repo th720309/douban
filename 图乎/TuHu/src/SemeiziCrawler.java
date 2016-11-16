@@ -30,8 +30,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 /**
- * http://sejie.wanxun.org/post/2012-09-25/40039413449
- * @author Administrator
+ * @author Hao Tian
  *
  */
 public class SemeiziCrawler {
@@ -39,7 +38,7 @@ public class SemeiziCrawler {
     private static final String BASEHOST = "https://www.douban.com/group/lvxing/discussion?start=0";
     private static DefaultHttpClient client = ConnectionManager.getHttpClient();
     static String url = "https://www.douban.com/group/lvxing/discussion?start=0";
-    private static String IMGPATH = "D:\\Í¼ºõ"+File.separator+StringUtil.getDate();
+    private static String IMGPATH = "D:\\å›¾ä¹"+File.separator+StringUtil.getDate();
     static int STARTPAGE = 1;
     static int PAGECOUNT = 20;
  
@@ -54,7 +53,7 @@ public class SemeiziCrawler {
                 host = "https://www.douban.com/group/lvxing/discussion?start="+(i-1)*25;
                // System.out.println(host);
             }
-            System.out.println("½øÈëµÚ"+i+"Ò³");
+            System.out.println("è¿›å…¥ç¬¬"+i+"é¡µ");
             String pageContext = getResultByUrl(host);
             //System.out.println(pageContext);
             List<String>articleURLS = getArticleURL(pageContext);
@@ -64,7 +63,7 @@ public class SemeiziCrawler {
                 String articleContext = getResultByUrl(articleURL);
                 List<String> ImgURLS = getImgURLS(articleContext);
                 for(String ImgURL:ImgURLS){
-                	System.out.println("Í¼Æ¬µØÖ·"+ImgURL);
+                	System.out.println("å›¾ç‰‡åœ°å€"+ImgURL);
                 	saveImageToDisk(ImgURL);
                 }
             }
@@ -76,12 +75,12 @@ public class SemeiziCrawler {
 //      }
     }
     /**
-     * ¸ù¾İurl»ñÈ¡Ò³Ãæ
+     * æ ¹æ®urlè·å–é¡µé¢
      * @param url
      * @return
      */
     public static String getResultByUrl(String url){
-        System.out.println("´ò¿ªÍøÒ³"+url);
+        System.out.println("æ‰“å¼€ç½‘é¡µ"+url);
         HttpGet get = new HttpGet(url);
         HttpEntity entity = null;
         HttpResponse response = null;
@@ -97,7 +96,7 @@ public class SemeiziCrawler {
                 return sw.toString();
             }
         } catch (Exception e) {
-            System.out.println("ÍøÒ³´ò¿ª³ö´í");
+            System.out.println("ç½‘é¡µæ‰“å¼€å‡ºé”™");
             return null;
         }finally{
             get.abort();
@@ -110,8 +109,8 @@ public class SemeiziCrawler {
         return null;
     }
     /**
-     * ÕÒ³öµ±Ç°Ò³ÃæÖĞËùÓĞÌû×ÓµÄµØÖ·
-     * @param pageStr  ÍøÒ³×Ö·û´®
+     * æ‰¾å‡ºå½“å‰é¡µé¢ä¸­æ‰€æœ‰å¸–å­çš„åœ°å€
+     * @param pageStr  ç½‘é¡µå­—ç¬¦ä¸²
      * @return
      */
     public static List<String> getArticleURL(String pageContext){
@@ -119,7 +118,7 @@ public class SemeiziCrawler {
             return null;
         }
         List<String> articleURLS = new ArrayList<String>();
-        System.out.println("Ñ°ÕÒÌû×Ó...........");
+        System.out.println("å¯»æ‰¾å¸–å­...........");
         try {
             Document doc = Jsoup.parseBodyFragment(pageContext);
             //Elements es = doc.select("div"); 
@@ -128,7 +127,7 @@ public class SemeiziCrawler {
             es = es.select("a");
         	//String relHref = es.attr("href"); // == "/"
         	//String absHref = es.attr("abs:href"); // "http://www.open-open.com/"
-           // es = es.select("div.meta a:containsOwn(È«ÎÄ)");
+           // es = es.select("div.meta a:containsOwn(å…¨æ–‡)");
             
             for(Element e:es){
             	//String text=e.text();
@@ -145,7 +144,7 @@ public class SemeiziCrawler {
         return articleURLS;
     }
     /**
-     * »ñÈ¡Ìû×ÓµÄÍ¼Æ¬µØÖ·
+     * è·å–å¸–å­çš„å›¾ç‰‡åœ°å€
      * @param articleURLS
      * @return
      */
@@ -154,7 +153,7 @@ public class SemeiziCrawler {
         if(articleContext == null){
             return null;
         }
-        System.out.println("»ñÈ¡Í¼Æ¬µØÖ·-----------");
+        System.out.println("è·å–å›¾ç‰‡åœ°å€-----------");
         Document doc = Jsoup.parse(articleContext);
         //System.out.println(articleContext);
         Elements es = doc.select("div[class=topic-content]").select("div[class=topic-figure cc]").select("img");
@@ -167,7 +166,7 @@ public class SemeiziCrawler {
         return ImgURLS;
     }
     /**
-     * ±£´æÍ¼Æ¬
+     * ä¿å­˜å›¾ç‰‡
      * @param ImgURL
      */
     public static InputStream getInputStream(String url1) {
@@ -177,15 +176,15 @@ public class SemeiziCrawler {
         try {
           URL url = new URL(url1);
           httpURLConnection = (HttpURLConnection) url.openConnection();
-          // ÉèÖÃÍøÂçÁ¬½Ó³¬Ê±Ê±¼ä
+          // è®¾ç½®ç½‘ç»œè¿æ¥è¶…æ—¶æ—¶é—´
           httpURLConnection.setConnectTimeout(3000);
-          // ÉèÖÃÓ¦ÓÃ³ÌĞòÒª´ÓÍøÂçÁ¬½Ó¶ÁÈ¡Êı¾İ
+          // è®¾ç½®åº”ç”¨ç¨‹åºè¦ä»ç½‘ç»œè¿æ¥è¯»å–æ•°æ®
           httpURLConnection.setDoInput(true);
 
           httpURLConnection.setRequestMethod("GET");
           int responseCode = httpURLConnection.getResponseCode();
           if (responseCode == 200) {
-            // ´Ó·şÎñÆ÷·µ»ØÒ»¸öÊäÈëÁ÷
+            // ä»æœåŠ¡å™¨è¿”å›ä¸€ä¸ªè¾“å…¥æµ
             inputStream = httpURLConnection.getInputStream();
 
           }
